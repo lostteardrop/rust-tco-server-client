@@ -5,17 +5,15 @@ use std::io;
 use std::io::{Read,Write};
  
  
-fn handle_client(mut stream: TcpStream) -> io::Result<()>{
- 
+fn handle_client(mut stream: TcpStream) -> io::Result<()>{  //处理接入stream
     let mut buf = [0;512];
     for _ in 0..1000{
         let bytes_read = stream.read(&mut buf)?;
         if bytes_read == 0{
             return Ok(());
         }
-        //let test="test";
         stream.write(&buf[..bytes_read])?;
-        println!("from client:{}",String::from_utf8_lossy(&buf));
+        println!("from client:{}",String::from_utf8_lossy(&buf));  //打印接受信息
         thread::sleep(time::Duration::from_secs(1));
         
         
@@ -25,7 +23,7 @@ fn handle_client(mut stream: TcpStream) -> io::Result<()>{
 }
  
 fn main() -> io::Result<()>{
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();  //开启7878端口绑定
     let mut thread_vec: Vec<thread::JoinHandle<()>> = Vec::new();
     
     for stream in listener.incoming() {
@@ -37,14 +35,11 @@ fn main() -> io::Result<()>{
         });
         
         thread_vec.push(handle);
-        //println!("{}",handle);
     }
 
     for handle in thread_vec {
         handle.join().unwrap();
     }
-    //println!("test");
-   // println!(stream);
     Ok(())
  
  
